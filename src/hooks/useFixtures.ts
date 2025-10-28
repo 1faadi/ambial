@@ -21,10 +21,11 @@ export function useFixtures() {
 
       const optimistic: Fixture = {
         id: `optimistic-${Date.now()}`,
+        sequentialId: 0, // Will be updated on success
         fixtureType: variables.fixtureType,
         modelName: variables.modelName,
-        sizeIn: variables.sizeIn ?? null,
         manufacturer: variables.manufacturer,
+        sizeIn: variables.sizeIn ?? null,
         price: variables.price ?? null,
         lumens: variables.lumens ?? null,
         peakPowerW: variables.peakPowerW ?? null,
@@ -39,8 +40,8 @@ export function useFixtures() {
         maxCCT: variables.maxCCT ?? null,
         createdAt: new Date(),
         updatedAt: new Date(),
-        sidebarId: variables.sidebarId ?? null,
         userId: 'optimistic',
+        sidebarId: variables.sidebarId ?? null,
         channelCount: variables.channelCount ?? null,
         dimmingGamma: variables.dimmingGamma ?? null,
       };
