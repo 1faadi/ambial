@@ -1,0 +1,102 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider      = "prisma-client-js"
+  binaryTargets = ["native", "rhel-openssl-1.0.x"]
+  // output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id           String   @id @default(cuid())
+  name         String?
+  email        String   @unique
+  password     String
+  profileImage String?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  projects   Project[]
+  fixtures   Fixture[]
+  mixLibrary MixLibrary?
+}
+
+model Project {
+  id               String   @id @default(cuid())
+  name             String
+  pixelToFeetRatio Float?
+  thumbnail        String?
+  data             String?
+  canvasWidth      Int      @default(0)
+  canvasHeight     Int      @default(0)
+  userId           String
+  user             User     @relation(fields: [userId], references: [id])
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+}
+
+model Manufacturer {
+  id        String   @id @default(cuid())
+  name      String   @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Fixture {
+  id           String   @id @default(cuid())
+  sequentialId Int      @unique
+  fixtureType  String
+  modelName    String
+  sizeIn       Float?
+  manufacturer String
+  price        Float?
+  lumens       Int?
+  peakPowerW   Float?
+  maxVoltageV  Float?
+  maxCurrentA  Float?
+  minPWM       Int?
+  maxPWM       Int?
+  dimmingMode  String?
+  dimmingCurve String? // deprecated
+  dimmingGamma Int?
+  minCCT       Int?
+  midCCT       Int?
+  maxCCT       Int?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  userId       String
+  sidebarId    Int?
+  user         User     @relation(fields: [userId], references: [id])
+  channelCount Int?
+}
+
+model MixLibrary {
+  id                String   @id @default(cuid())
+  fileName          String
+  mixLibraryVersion String
+  units             String
+  indexRangeMin     Int
+  indexRangeMax     Int
+  layerSequence     Json // Store as JSON object
+  userId            String   @unique
+  user              User     @relation(fields: [userId], references: [id])
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  mixes Mix[]
+}
+
+model Mix {
+  id           String     @id @default(cuid())
+  mixId        Int // The ID from the JSON file
+  layerCount   Int
+  mixLibraryId String
+  mixLibrary   MixLibrary @relation(fields: [mixLibraryId], references: [id], onDelete: Cascade)
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+}
